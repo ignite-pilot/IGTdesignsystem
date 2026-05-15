@@ -1,0 +1,60 @@
+/* TableDataHeader — figma-spec.json: 6198:70551 (guRwzd5hH02rnIGu6OBRzD) */
+
+.table-data-header {
+  width: 140px;
+  flex-shrink: 0;
+  align-self: stretch;          /* 행 높이 채움 (Figma: vertical fill) */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: stretch;
+  padding: var(--spacing-12) var(--spacing-16);
+  gap: var(--spacing-10);
+  background: var(--sys-surface-grouped-default);
+}
+
+/* 내부 컨텐츠 행 — Figma Container 레이어 (padding: 6px 0) */
+.table-data-header__container {
+  display: flex;
+  align-items: stretch;
+  padding: 6px 0;
+  width: 100%;
+}
+
+/* 라벨 행 — required mark + title + trailing icon */
+.table-data-header__label {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-4);
+  flex: 1;
+}
+
+/* required mark 영역 — Figma: padding-top 7px, align-self stretch */
+.table-data-header__required-area {
+  display: flex;
+  align-items: flex-start;
+  padding-top: 7px;             /* Figma 실측: required area padding 7px 0 0 */
+  align-self: stretch;
+  flex-shrink: 0;
+}
+
+
+/* 타이틀 텍스트 */
+.table-data-header__title {
+  font-family: var(--semantic-body-14-semibold-fontFamily);
+  font-size: var(--semantic-body-14-semibold-fontSize);
+  line-height: var(--semantic-body-14-semibold-lineHeight);
+  font-weight: var(--semantic-body-14-semibold-fontWeight);
+  letter-spacing: var(--semantic-body-14-semibold-letterSpacing);
+  color: var(--sys-content-neutral-default);
+}
+
+/* trailing icon — Figma: alignSelf stretch, padding-top 2px (아이콘 상단 고정) */
+.table-data-header__icon-container {
+  display: flex;
+  align-items: flex-start;
+  align-self: stretch;
+  padding-top: 2px;
+  flex-shrink: 0;
+  color: var(--sys-content-neutral-subtle);
+}

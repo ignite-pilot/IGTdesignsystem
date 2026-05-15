@@ -1,0 +1,369 @@
+/* Composition component | figma-spec: 6135:126884 | 2026-05-08 */
+/* Canonical backoffice page layout reference */
+
+/* ── Full page layout ───────────────────────────── */
+/* GNB 전체 너비 최상단, 하단에 LNB + content 가로 배치 */
+
+.ttp-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: var(--sys-surface-static);
+}
+
+/* ── LNB sidebar ────────────────────────────────── */
+/* Figma: 250px wide, background --sys-background-subtle */
+
+.ttp-lnb {
+  width: 250px;
+  flex-shrink: 0;
+  background: var(--sys-background-subtle);
+  padding: var(--spacing-24) var(--spacing-12);
+  overflow-y: auto;
+}
+
+/* ── Nav logo placeholder ───────────────────────── */
+
+.ttp-nav-logo {
+  font-family: var(--semantic-label-14-semibold-fontFamily);
+  font-size: var(--semantic-label-14-semibold-fontSize);
+  font-weight: var(--semantic-label-14-semibold-fontWeight);
+  color: var(--sys-content-neutral-strong);
+}
+
+/* ── Body area (GNB 하단 — LNB + content 가로 배치) ─ */
+
+.ttp-body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+/* ── Content area ───────────────────────────────── */
+/* Figma: contents frame — vertical, gap 40, white bg */
+/* Figma position analysis: 48px inset on all sides (T/L/R/B) from LNB+TopNav boundary */
+
+.ttp-content {
+  flex: 1;
+  padding: var(--spacing-48);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-40);
+  background: var(--sys-background-base);
+}
+
+/* ── Title section ──────────────────────────────── */
+/* Figma: horizontal, space-between, height 40 */
+
+.ttp-title-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ttp-page-title {
+  margin: 0;
+  font-family: var(--semantic-heading-20-bold-fontFamily);
+  font-size: var(--semantic-heading-20-bold-fontSize);
+  line-height: var(--semantic-heading-20-bold-lineHeight);
+  font-weight: var(--semantic-heading-20-bold-fontWeight);
+  letter-spacing: var(--semantic-heading-20-bold-letterSpacing);
+  color: var(--sys-content-neutral-strong);
+}
+
+/* ── Filter section (Searchbox) ─────────────────── */
+/* Figma: Searchbox frame — --sys-background-subtle, borderRadius 4, padding 24, gap 16 */
+
+.ttp-section {
+  background: var(--sys-background-subtle);
+  border-radius: var(--radius-4);
+  padding: var(--spacing-24);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-16);
+}
+
+/* ── Filter rows — single-column label+control layout ── */
+/* Figma: node 6170:2288 "Searchbox" 실측값 기준 */
+/* Dropdown Group Container gap=14, cont gap=8, label width=140, label paddingTop=11 */
+
+.ttp-filter-rows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-14); /* Figma: Dropdown Group Container itemSpacing=14 */
+}
+
+.ttp-filter-row {
+  display: flex;
+  align-items: flex-start; /* 라벨이 paddingTop으로 정렬 처리 */
+  gap: var(--spacing-8);   /* Figma: cont.itemSpacing=8 */
+}
+
+/* 인라인 컨트롤 그룹(라디오/체크박스) row — Figma: label paddingTop=8 */
+.ttp-filter-row--inline > .ttp-filter-row-label {
+  padding-top: 8px;
+}
+
+.ttp-filter-row-label {
+  width: 140px;            /* Figma: label frame width=140 */
+  flex-shrink: 0;
+  padding-top: 11px;       /* Figma: label paddingTop=11 (40px 입력 컨트롤과 수직 정렬) */
+  /* Figma text node: fontSize=15, fontWeight=600, lineHeight=18, letterSpacing=tight */
+  font-family: var(--semantic-label-14-semibold-fontFamily);
+  font-size: var(--semantic-label-14-semibold-fontSize);
+  line-height: var(--semantic-label-14-semibold-lineHeight);
+  font-weight: var(--semantic-label-14-semibold-fontWeight);
+  letter-spacing: var(--semantic-label-14-semibold-letterSpacing);
+  /* Figma: VariableID:3:3 = --color-greyAlpha-800 = rgba(0,12,30,0.80) */
+  color: var(--sys-content-neutral-default);
+}
+
+.ttp-filter-row-control {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Search composite: Select(type) + TextField */
+.ttp-search-composite {
+  display: flex;
+  gap: var(--spacing-8);
+}
+
+.ttp-search-select {
+  width: 160px;
+  flex-shrink: 0;
+}
+
+/* Date composite: Select(type) + DatePicker + preset chips — 가로 배치, 공간 부족 시 preset 그룹 전체가 줄바꿈 */
+.ttp-date-composite {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-8);
+}
+
+.ttp-date-select {
+  width: 160px;
+  flex-shrink: 0;
+}
+
+/* preset 칩 그룹 — 칩 내부 줄바꿈 없이 그룹 전체 단위로 이동 */
+.ttp-date-preset-group {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  flex-shrink: 0;
+}
+
+/* Status with tags: Select + TagInput below */
+.ttp-status-with-tags {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-8);
+}
+
+/* Setting RadioBox group — paddingTop/Bottom 3, 항목 간 gap 24 */
+.ttp-radio-group {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-24);
+  padding: 3px 0;
+}
+
+.ttp-radio-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-4);  /* 컨트롤↔라벨 간격 */
+  cursor: pointer;
+}
+
+.ttp-radio-item-label {
+  /* v5: 14px 기본 스케일. 원 Figma fontSize=15, fontWeight=600 */
+  font-family: var(--semantic-body-14-semibold-fontFamily);
+  font-size: var(--semantic-body-14-semibold-fontSize);
+  line-height: var(--semantic-body-14-semibold-lineHeight);
+  font-weight: var(--semantic-body-14-semibold-fontWeight);
+  letter-spacing: var(--semantic-body-14-semibold-letterSpacing);
+  color: var(--sys-content-neutral-strong);
+}
+
+/* ── Checkbox multiselect (Business ending in 행) ────── */
+/* inline frame, horizontal, wrap, 항목 간 gap 24, paddingTop/Bottom 3 */
+
+.ttp-checkbox-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-24);
+  padding: 3px 0;
+}
+
+.ttp-checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-4);  /* 컨트롤↔라벨 간격 */
+  cursor: pointer;
+}
+
+.ttp-checkbox-item-label {
+  font-family: var(--semantic-body-14-semibold-fontFamily);
+  font-size: var(--semantic-body-14-semibold-fontSize);
+  line-height: var(--semantic-body-14-semibold-lineHeight);
+  font-weight: var(--semantic-body-14-semibold-fontWeight);
+  letter-spacing: var(--semantic-body-14-semibold-letterSpacing);
+  color: var(--sys-content-neutral-default);
+}
+
+/* ── Button group — justifyContent: flex-end from Figma ── */
+
+.ttp-button-group {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--spacing-8);
+}
+
+/* ── Count info container ───────────────────────── */
+/* Figma: Count Info Container — vertical, gap 12 */
+
+.ttp-count-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-12);
+}
+
+/* ── Table header bar ───────────────────────────── */
+/* Figma: Container — horizontal, space-between */
+
+.ttp-table-header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* ── Count info — "N개 · N개 선택" ──────────────── */
+/* Figma: Count Info — horizontal, gap 4 */
+
+.ttp-count-info {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-4);
+}
+
+.ttp-count-total {
+  font-family: var(--semantic-body-14-semibold-fontFamily);
+  font-size: var(--semantic-body-14-semibold-fontSize);
+  line-height: var(--semantic-body-14-semibold-lineHeight);
+  font-weight: var(--semantic-body-14-semibold-fontWeight);
+  letter-spacing: var(--semantic-body-14-semibold-letterSpacing);
+  color: var(--sys-content-neutral-default);
+}
+
+.ttp-count-bullet {
+  font-family: var(--semantic-body-14-semibold-fontFamily);
+  font-size: var(--semantic-body-14-semibold-fontSize);
+  line-height: var(--semantic-body-14-semibold-lineHeight);
+  font-weight: var(--semantic-body-14-semibold-fontWeight);
+  color: var(--sys-content-neutral-weak);
+}
+
+.ttp-count-selected {
+  font-family: var(--semantic-body-14-semibold-fontFamily);
+  font-size: var(--semantic-body-14-semibold-fontSize);
+  line-height: var(--semantic-body-14-semibold-lineHeight);
+  font-weight: var(--semantic-body-14-semibold-fontWeight);
+  letter-spacing: var(--semantic-body-14-semibold-letterSpacing);
+  color: var(--sys-content-brand-default);
+}
+
+/* ── Table action buttons ───────────────────────── */
+/* Figma: Container — horizontal, gap 16 (2 sub-groups) */
+
+.ttp-table-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-16);
+}
+
+/* Figma: Button container 1 / 2 — horizontal, gap 6 */
+.ttp-table-action-group {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-6);
+}
+
+/* ── Table + Pagination 그룹 ─────────────────────── */
+/* Figma: Table Container — table body + pagination bar, gap 0 */
+
+.ttp-table-group {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Table scroll wrapper ───────────────────────── */
+/* Table 컴포넌트 내부(table-wrapper)가 overflow-x: auto를 처리 — 외곽 border/radius 없음 */
+
+.ttp-table-scroll-wrapper {
+  overflow-x: auto;
+}
+
+/* ── Pagination bar ─────────────────────────────── */
+/* Figma: container — padding 24 top/bottom, center */
+
+.ttp-pagination-bar {
+  display: flex;
+  justify-content: center;
+  padding: var(--spacing-24) 0;
+}
+
+/* ── Inline multi-select (Status 3 row) ─────────── */
+
+.ttp-multiselect-wrapper {
+  width: 100%;
+}
+
+.ttp-multiselect-trigger-area {
+  position: relative;
+}
+
+.ttp-multiselect-panel {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  z-index: 200;
+  background: var(--sys-background-base);
+  border: 1px solid var(--sys-border-neutral-subtle);
+  border-radius: var(--radius-sm);
+  padding: var(--spacing-4) 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.ttp-multiselect-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  padding: var(--spacing-8) var(--spacing-12);
+  cursor: pointer;
+}
+
+.ttp-multiselect-item:hover {
+  background: var(--sys-background-subtle);
+}
+
+.ttp-multiselect-item-label {
+  /* Figma: 아이템 텍스트 노드 fontSize=14, fontWeight=600, lineHeight=20 → body-14-semibold */
+  font-family: var(--semantic-body-14-semibold-fontFamily);
+  font-size: var(--semantic-body-14-semibold-fontSize);
+  line-height: var(--semantic-body-14-semibold-lineHeight);
+  font-weight: var(--semantic-body-14-semibold-fontWeight);
+  letter-spacing: var(--semantic-body-14-semibold-letterSpacing);
+  color: var(--sys-content-neutral-default);
+}
+
+.ttp-multiselect-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-8);
+  margin-top: var(--spacing-8);
+}

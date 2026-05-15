@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="ko" data-brand="default" data-theme="light" data-radius="default" data-size="comfortable">
+<!-- data-theme은 JS가 OS 설정을 읽어 "light" 또는 "dark"로 자동 세팅 -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IGT Design System — Theme Playground</title>
+
+  <!-- IGT CSS — 토큰 + 컴포넌트 CSS 전체 -->
+  <link rel="stylesheet" href="./dist/igt.css">
+
+  <style>
+    /* ── 기본 리셋 & 폰트 ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--typography-fontFamily-primary), -apple-system, sans-serif;
+      font-size: 14px;
+      background: #f0f0f0;
+      min-height: 100vh;
+    }
+
+    /* ── 컨트롤 패널 (playground UI, IGT와 별개) ── */
+    .pg-panel {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: #1a1a1a;
+      color: #fff;
+      padding: 12px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .pg-controls-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: center;
+    }
+    .pg-control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .pg-control-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #666;
+    }
+    .pg-seg {
+      display: flex;
+      background: #2a2a2a;
+      border-radius: 6px;
+      padding: 2px;
+      gap: 2px;
+    }
+    .pg-seg button {
+      padding: 4px 10px;
+      border: none;
+      border-radius: 4px;
+      background: transparent;
+      color: #888;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.12s, color 0.12s;
+      white-space: nowrap;
+      font-family: inherit;
+    }
+    .pg-seg button:hover { color: #ccc; background: #333; }
+    .pg-seg button.active { background: #fff; color: #000; font-weight: 600; }
+
+    .pg-preset-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .pg-preset-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #555;
+    }
+    .pg-preset-btn {
+      padding: 4px 12px;
+      border: 1px solid #333;
+      border-radius: 4px;
+      background: transparent;
+      color: #888;
+      font-size: 11px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: border-color 0.12s, color 0.12s;
+      font-family: inherit;
+    }
+    .pg-preset-btn:hover { border-color: #666; color: #ccc; }
+    .pg-preset-btn.active { border-color: #fff; color: #fff; }
+
+    /* ── 미리보기 영역 (IGT 토큰 적용) ── */
+    .pg-preview-wrap {
+      padding: 32px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .pg-preview-card {
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    }
+    .pg-preview-inner {
+      background: var(--sys-background-base);
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+      transition: background 0.2s;
+    }
+    .pg-section-title {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--sys-content-neutral-muted);
+      margin-bottom: 2px;
+    }
+    .pg-section-divider {
+      width: 100%;
+      height: 1px;
+      background: var(--sys-border-neutral-subtle);
+      margin: 4px 0 16px;
+    }
+    .pg-row   { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+    .pg-col   { display: flex; flex-direction: column; gap: 12px; }
+    .pg-col-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .pg-form-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+    }
+    .pg-form-label {
+      width: 120px;
+      flex-shrink: 0;
+      padding-top: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--sys-content-neutral-default);
+    }
+    .pg-form-control { flex: 1; min-width: 0; }
+    .pg-note {
+      font-size: 12px;
+      color: var(--sys-content-neutral-muted);
+      line-height: 1.6;
+    }
+
+    /* ── 코드 스니펫 ── */
+    .pg-code-box {
+      background: #1a1a1a;
+      border-radius: 8px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .pg-code-box code {
+      font-family: 'Menlo', 'Monaco', 'Consolas', monospace;
+      font-size: 13px;
+      color: #e0e0e0;
+      word-break: break-all;
+    }
+    .pg-code-box code .attr-name  { color: #9ecbff; }
+    .pg-code-box code .attr-value { color: #f8c555; }
+    .pg-copy-btn {
+      flex-shrink: 0;
+      padding: 6px 14px;
+      border: 1px solid #444;
+      border-radius: 6px;
+      background: transparent;
+      color: #888;
+      font-size: 12px;
+      cursor: pointer;
+      transition: border-color 0.12s, color 0.12s;
+      font-family: inherit;
+    }
+    .pg-copy-btn:hover { border-color: #888; color: #ccc; }
+    .pg-copy-btn.copied { border-color: #4caf50; color: #4caf50; }
+  </style>
+</head>
+
+<body>
+
+  <!-- ── 컨트롤 패널 ── -->
+  <div class="pg-panel">
+    <div class="pg-controls-row">
+
+      <div class="pg-control-group">
+        <div class="pg-control-label">Brand</div>
+        <div class="pg-seg" data-attr="brand">
+          <button data-val="default" class="active">Default</button>
+          <button data-val="finance">Finance</button>
+        </div>
+      </div>
+
+      <div class="pg-control-group">
+        <div class="pg-control-label">Theme</div>
+        <div class="pg-seg" data-attr="theme">
+          <button data-val="system" class="active">System <span id="system-indicator"></span></button>
+          <button data-val="light">Light 고정</button>
+          <button data-val="dark">Dark 고정</button>
+        </div>
+      </div>
+
+      <div class="pg-control-group">
+        <div class="pg-control-label">Radius</div>
+        <div class="pg-seg" data-attr="radius">
+          <button data-val="default" class="active">Default</button>
+          <button data-val="soft">Soft</button>
+          <button data-val="friendly">Friendly</button>
+          <button data-val="playful">Playful</button>
+          <button data-val="formal">Formal</button>
+        </div>
+      </div>
+
+      <div class="pg-control-group">
+        <div class="pg-control-label">Size</div>
+        <div class="pg-seg" data-attr="size">
+          <button data-val="comfortable" class="active">Comfortable</button>
+          <button data-val="compact">Compact</button>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="pg-preset-row">
+      <span class="pg-preset-label">프리셋</span>
+      <button class="pg-preset-btn" data-preset="backoffice">Backoffice</button>
+      <button class="pg-preset-btn" data-preset="saas">SaaS</button>
+      <button class="pg-preset-btn" data-preset="commerce">Commerce</button>
+      <button class="pg-preset-btn" data-preset="finance">Finance</button>
+      <button class="pg-preset-btn" data-preset="media">Media</button>
+    </div>
+  </div>
+
+  <!-- ── 미리보기 (실제 IGT 컴포넌트 클래스 사용) ── -->
+  <div class="pg-preview-wrap">
+
+    <div class="pg-preview-card">
+      <div class="pg-preview-inner">
+
+        <!-- ═══════════ 1. Actions ═══════════ -->
+        <div>
+          <div class="pg-section-title">Actions — Button / Chip</div>
+          <div class="pg-section-divider"></div>
+
+          <div class="pg-col" style="gap:14px">
+            <div class="pg-row">
+              <button class="btn" data-tone="primary" data-appearance="fill" data-emphasis="strong" data-size="xs"><span class="btn-label-wrap"><span class="btn-label">XS</span></span></button>
+              <button class="btn" data-tone="primary" data-appearance="fill" data-emphasis="strong" data-size="sm"><span class="btn-label-wrap"><span class="btn-label">SM</span></span></button>
+              <button class="btn" data-tone="primary" data-appearance="fill" data-emphasis="strong" data-size="md"><span class="btn-label-wrap"><span class="btn-label">MD</span></span></button>
+              <button class="btn" data-tone="primary" data-appearance="fill" data-emphasis="strong" data-size="lg"><span class="btn-label-wrap"><span class="btn-label">LG</span></span></button>
+            </div>
+            <div class="pg-row">
+              <button class="btn" data-tone="primary" data-appearance="fill" data-emphasis="strong" data-size="md"><span class="btn-label-wrap"><span class="btn-label">Primary</span></span></button>
+              <button class="btn" data-tone="secondary" data-appearance="fill" data-emphasis="strong" data-size="md"><span class="btn-label-wrap"><span class="btn-label">Secondary</span></span></button>
+              <button class="btn" data-tone="secondary" data-appearance="outline" data-emphasis="strong" data-size="md"><span class="btn-label-wrap"><span class="btn-label">Outline</span></span></button>
+              <button class="btn" data-tone="secondary" data-appearance="fill" data-emphasis="weak" data-size="md"><span class="btn-label-wrap"><span class="btn-label">Subtle</span></span></button>
+              <button class="btn" data-tone="danger" data-appearance="fill" data-emphasis="strong" data-size="md"><span class="btn-label-wrap"><span class="btn-label">Danger</span></span></button>
+            </div>
+            <div class="pg-row">
+              <button class="chip chip--action" data-size="md"><span class="chip__label">액션 칩</span></button>
+              <button class="chip chip--choice" data-size="md" data-selected="true" aria-pressed="true"><span class="chip__label">선택됨</span></button>
+              <button class="chip chip--choice" data-size="md" aria-pressed="false"><span class="chip__label">선택 안 됨</span></button>
+              <button class="chip chip--filter" data-size="md" data-selected="true" aria-pressed="true"><span class="chip__label">필터: 진행중</span></button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══════════ 2. Form Inputs ═══════════ -->
+        <div>
+          <div class="pg-section-title">Form — TextField / Select / Checkbox / Switch / RadioBox</div>
+          <div class="pg-section-divider"></div>
+
+          <div class="pg-col" style="gap:16px; max-width:560px">
+            <div class="pg-form-row">
+              <div class="pg-form-label">이름</div>
+              <div class="pg-form-control">
+                <div class="tf" data-appearance="outline" data-size="lg">
+                  <div class="tf__container">
+                    <input class="tf__input" placeholder="이름을 입력하세요">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="pg-form-row">
+              <div class="pg-form-label">역할</div>
+              <div class="pg-form-control">
+                <button type="button" class="select" data-appearance="outline" data-size="md" data-width="hug">
+                  <span class="select__value"><span style="pointer-events:none">관리자</span></span>
+                  <span class="select__icon" aria-hidden="true" style="display:inline-flex;width:16px;height:16px;flex-shrink:0">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M19.2931 8.29289C19.6837 7.90237 20.3167 7.90237 20.7072 8.29289C21.0976 8.68343 21.0977 9.31649 20.7072 9.70696L12.7072 17.707L11.2931 17.707L3.29314 9.70696C2.90261 9.31643 2.90261 8.68342 3.29314 8.29289C3.68366 7.90237 4.31668 7.90237 4.7072 8.29289L12.0002 15.5859L19.2931 8.29289Z" fill="currentColor"/></svg>
+                  </span>
+                </button>
+              </div>
+            </div>
+
+            <div class="pg-form-row">
+              <div class="pg-form-label">동의</div>
+              <div class="pg-form-control">
+                <div class="pg-row" style="gap:24px">
+                  <label style="display:inline-flex;align-items:center;gap:8px;cursor:pointer">
+                    <span class="checkbox" data-size="md" data-checked="true">
+                      <input type="checkbox" class="checkbox__input" checked>
+                      <span class="checkbox__control" aria-hidden="true">
+                        <span class="checkbox__icon" style="display:inline-flex;width:16px;height:16px">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M17.94 6.44C18.53 5.85 19.47 5.85 20.06 6.44C20.65 7.03 20.65 7.97 20.06 8.56L11.06 17.56C10.47 18.15 9.53 18.15 8.94 17.56L3.94 12.56C3.35 11.97 3.35 11.03 3.94 10.44C4.53 9.85 5.47 9.85 6.06 10.44L10 14.38L17.94 6.44Z" fill="currentColor"/></svg>
+                        </span>
+                      </span>
+                    </span>
+                    <span style="font-size:13px;color:var(--sys-content-neutral-default)">이용약관 동의</span>
+                  </label>
+                  <label style="display:inline-flex;align-items:center;gap:8px;cursor:pointer">
+                    <span class="checkbox" data-size="md" data-checked="false">
+                      <input type="checkbox" class="checkbox__input">
+                      <span class="checkbox__control" aria-hidden="true"></span>
+                    </span>
+                    <span style="font-size:13px;color:var(--sys-content-neutral-default)">마케팅 수신</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div class="pg-form-row">
+              <div class="pg-form-label">알림 받기</div>
+              <div class="pg-form-control">
+                <span class="switch" data-size="md" data-on="true">
+                  <input type="checkbox" role="switch" class="switch__input" aria-checked="true" checked>
+                  <span class="switch__track" aria-hidden="true">
+                    <span class="switch__thumb"></span>
+                  </span>
+                </span>
+              </div>
+            </div>
+
+            <div class="pg-form-row">
+              <div class="pg-form-label">권한</div>
+              <div class="pg-form-control">
+                <div class="pg-row" style="gap:20px">
+                  <label style="display:inline-flex;align-items:center;gap:8px;cursor:pointer">
+                    <span class="radio" data-size="md" data-checked="true">
+                      <input type="radio" class="radio__input" name="role" value="admin" checked>
+                      <span class="radio__control" aria-hidden="true">
+                        <span class="radio__icon" style="display:inline-flex;width:16px;height:16px">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 6C15.31 6 18 8.69 18 12C18 15.31 15.31 18 12 18C8.69 18 6 15.31 6 12C6 8.69 8.69 6 12 6Z" fill="currentColor"/></svg>
+                        </span>
+                      </span>
+                    </span>
+                    <span style="font-size:13px;color:var(--sys-content-neutral-default)">관리자</span>
+                  </label>
+                  <label style="display:inline-flex;align-items:center;gap:8px;cursor:pointer">
+                    <span class="radio" data-size="md" data-checked="false">
+                      <input type="radio" class="radio__input" name="role" value="editor">
+                      <span class="radio__control" aria-hidden="true"></span>
+                    </span>
+                    <span style="font-size:13px;color:var(--sys-content-neutral-default)">에디터</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══════════ 3. Feedback ═══════════ -->
+        <div>
+          <div class="pg-section-title">Feedback — Banner / Alert</div>
+          <div class="pg-section-divider"></div>
+
+          <div class="pg-col">
+            <div class="banner" data-type="success" data-variant="subtle" role="alert">
+              <div class="banner__content">
+                <span class="banner__icon" aria-hidden="true">
+                  <span style="display:inline-flex;width:20px;height:20px;flex-shrink:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C17.52 2 22 6.48 22 12C22 17.52 17.52 22 12 22C6.48 22 2 17.52 2 12C2 6.48 6.48 2 12 2ZM16.71 8.79C16.32 8.40 15.68 8.40 15.29 8.79L11 13.09L8.71 10.79C8.32 10.40 7.68 10.40 7.29 10.79C6.90 11.18 6.90 11.82 7.29 12.21L10.29 15.21C10.68 15.60 11.32 15.60 11.71 15.21L16.71 10.21C17.10 9.82 17.10 9.18 16.71 8.79Z" fill="currentColor"/></svg></span>
+                </span>
+                <div class="banner__stack">
+                  <div class="banner__text">
+                    <span class="banner__title">변경 사항이 저장되었습니다</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="banner" data-type="warning" data-variant="subtle" role="alert">
+              <div class="banner__content" data-multiline="">
+                <span class="banner__icon" aria-hidden="true">
+                  <span style="display:inline-flex;width:20px;height:20px;flex-shrink:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C17.52 2 22 6.48 22 12C22 17.52 17.52 22 12 22C6.48 22 2 17.52 2 12C2 6.48 6.48 2 12 2ZM12 14.25C11.31 14.25 10.75 14.81 10.75 15.5C10.75 16.19 11.31 16.75 12 16.75C12.69 16.75 13.25 16.19 13.25 15.5C13.25 14.81 12.69 14.25 12 14.25ZM12 7.5C11.45 7.5 11 7.95 11 8.5V12C11 12.55 11.45 13 12 13C12.55 13 13 12.55 13 12V8.5C13 7.95 12.55 7.5 12 7.5Z" fill="currentColor"/></svg></span>
+                </span>
+                <div class="banner__stack">
+                  <div class="banner__text">
+                    <span class="banner__title">세션이 곧 만료됩니다</span>
+                    <span class="banner__description">30분 후 자동 로그아웃됩니다.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══════════ 4. Disclosure ═══════════ -->
+        <div>
+          <div class="pg-section-title">Disclosure — SegmentControl / Pagination</div>
+          <div class="pg-section-divider"></div>
+
+          <div class="pg-col" style="gap:16px">
+            <div class="segment-control" data-size="md" data-width="content" role="tablist">
+              <button role="tab" type="button" class="segment-control__item" aria-selected="true" data-selected=""><span class="segment-control__label">전체</span></button>
+              <button role="tab" type="button" class="segment-control__item" aria-selected="false"><span class="segment-control__label">진행중</span></button>
+              <button role="tab" type="button" class="segment-control__item" aria-selected="false"><span class="segment-control__label">완료</span></button>
+            </div>
+
+            <nav aria-label="Pagination" class="pagination" data-size="md">
+              <div class="pagination__prev-container">
+                <button class="pagination__arrow" disabled="" aria-label="First page" type="button">
+                  <span style="display:inline-flex;width:24px;height:24px;flex-shrink:0" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M8.79 5.79C9.18 5.40 9.82 5.40 10.21 5.79C10.60 6.18 10.60 6.82 10.21 7.21L5.41 12L10.21 16.79C10.60 17.18 10.60 17.82 10.21 18.21C9.82 18.60 9.18 18.60 8.79 18.21L3.29 12.71L3.23 11.37L8.79 5.79Z M17.29 5.79C17.68 5.40 18.32 5.40 18.71 5.79C19.10 6.18 19.10 6.82 18.71 7.21L13.91 12L18.71 16.79C19.10 17.18 19.10 17.82 18.71 18.21C18.32 18.60 17.68 18.60 17.29 18.21L11.79 12.71L11.73 11.37L17.29 5.79Z" fill="currentColor"/></svg></span>
+                </button>
+                <button class="pagination__arrow" disabled="" aria-label="Previous page" type="button">
+                  <span style="display:inline-flex;width:24px;height:24px;flex-shrink:0" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M13.29 5.79C13.68 5.40 14.32 5.40 14.71 5.79C15.10 6.18 15.10 6.82 14.71 7.21L9.91 12L14.71 16.79C15.10 17.18 15.10 17.82 14.71 18.21C14.32 18.60 13.68 18.60 13.29 18.21L7.79 12.71L7.73 11.37L13.29 5.79Z" fill="currentColor"/></svg></span>
+                </button>
+              </div>
+              <button class="pagination__page" aria-label="Page 1" aria-current="page" data-current="" type="button">1</button>
+              <button class="pagination__page" aria-label="Page 2" type="button">2</button>
+              <button class="pagination__page" aria-label="Page 3" type="button">3</button>
+              <span class="pagination__ellipsis" aria-hidden="true">…</span>
+              <button class="pagination__page" aria-label="Page 10" type="button">10</button>
+              <div class="pagination__next-container">
+                <button class="pagination__arrow" aria-label="Next page" type="button">
+                  <span style="display:inline-flex;width:24px;height:24px;flex-shrink:0" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M8.79 5.79C9.18 5.40 9.82 5.40 10.21 5.79L15.71 11.29L15.77 11.37C15.92 11.55 16.00 11.77 16.00 12C16.00 12.27 15.89 12.52 15.71 12.71L10.21 18.21C9.82 18.60 9.18 18.60 8.79 18.21C8.40 17.82 8.40 17.18 8.79 16.79L13.59 12L8.79 7.21C8.40 6.82 8.40 6.18 8.79 5.79Z" fill="currentColor"/></svg></span>
+                </button>
+                <button class="pagination__arrow" aria-label="Last page" type="button">
+                  <span style="display:inline-flex;width:24px;height:24px;flex-shrink:0" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M15.21 5.79C14.82 5.40 14.18 5.40 13.79 5.79C13.40 6.18 13.40 6.82 13.79 7.21L18.59 12L13.79 16.79C13.40 17.18 13.40 17.82 13.79 18.21C14.18 18.60 14.82 18.60 15.21 18.21L20.71 12.71L20.77 11.37L15.21 5.79Z M6.71 5.79C6.32 5.40 5.68 5.40 5.29 5.79C4.90 6.18 4.90 6.82 5.29 7.21L10.09 12L5.29 16.79C4.90 17.18 4.90 17.82 5.29 18.21C5.68 18.60 6.32 18.60 6.71 18.21L12.21 12.71L12.27 11.37L6.71 5.79Z" fill="currentColor"/></svg></span>
+                </button>
+              </div>
+            </nav>
+          </div>
+        </div>
+
+        <!-- ═══════════ 5. Data ═══════════ -->
+        <div>
+          <div class="pg-section-title">Data — Table</div>
+          <div class="pg-section-divider"></div>
+
+          <div class="table-wrapper" data-size="lg">
+            <table class="table">
+              <thead>
+                <tr class="table__header-row">
+                  <th class="table__th" style="text-align:left">이름</th>
+                  <th class="table__th" style="text-align:left">상태</th>
+                  <th class="table__th" style="text-align:left">역할</th>
+                  <th class="table__th" style="text-align:right">마지막 접속</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="table__row">
+                  <td class="table__td" style="text-align:left">김민준</td>
+                  <td class="table__td" style="text-align:left"><button class="chip chip--filter" data-size="sm" data-selected="true" aria-pressed="true"><span class="chip__label">Active</span></button></td>
+                  <td class="table__td" style="text-align:left">Admin</td>
+                  <td class="table__td" style="text-align:right">2026-04-30</td>
+                </tr>
+                <tr class="table__row">
+                  <td class="table__td" style="text-align:left">이서연</td>
+                  <td class="table__td" style="text-align:left"><button class="chip chip--filter" data-size="sm" aria-pressed="false"><span class="chip__label">Inactive</span></button></td>
+                  <td class="table__td" style="text-align:left">Editor</td>
+                  <td class="table__td" style="text-align:right">2026-04-28</td>
+                </tr>
+                <tr class="table__row">
+                  <td class="table__td" style="text-align:left">박도현</td>
+                  <td class="table__td" style="text-align:left"><button class="chip chip--filter" data-size="sm" aria-pressed="false"><span class="chip__label">Pending</span></button></td>
+                  <td class="table__td" style="text-align:left">Viewer</td>
+                  <td class="table__td" style="text-align:right">2026-04-25</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <p class="pg-note">
+          이 페이지는 IGT 디자인 시스템의 실제 컴포넌트 클래스(<code>.btn</code>, <code>.tf</code>, <code>.checkbox</code>, <code>.table</code> 등)를 사용합니다.
+          더 많은 컴포넌트와 정확한 HTML 스니펫은 <code>dist/html-components.html</code>에서 확인하세요.
+        </p>
+
+      </div>
+    </div>
+
+    <!-- 코드 스니펫 -->
+    <div class="pg-code-box">
+      <code id="code-snippet"></code>
+      <button class="pg-copy-btn" id="copy-btn">복사</button>
+    </div>
+
+  </div>
+
+  <script>
+    const html = document.documentElement
+    const sysMQ = window.matchMedia('(prefers-color-scheme: dark)')
+
+    // 현재 테마 선택: 'system' | 'light' | 'dark'
+    let currentThemeChoice = 'system'
+
+    const presets = {
+      backoffice: { brand: 'default', theme: 'system', radius: 'default',  size: 'compact'     },
+      saas:       { brand: 'default', theme: 'system', radius: 'default',  size: 'comfortable' },
+      commerce:   { brand: 'default', theme: 'system', radius: 'friendly', size: 'comfortable' },
+      finance:    { brand: 'finance', theme: 'system', radius: 'formal',   size: 'comfortable' },
+      media:      { brand: 'default', theme: 'system', radius: 'soft',     size: 'comfortable' },
+    }
+
+    function resolveTheme(choice) {
+      if (choice === 'system') return sysMQ.matches ? 'dark' : 'light'
+      return choice
+    }
+
+    function updateSystemIndicator() {
+      const indicator = document.getElementById('system-indicator')
+      if (!indicator) return
+      const resolved = sysMQ.matches ? '🌙' : '☀️'
+      indicator.textContent = currentThemeChoice === 'system' ? resolved : ''
+    }
+
+    function applyThemeChoice(choice) {
+      currentThemeChoice = choice
+      html.dataset.theme = resolveTheme(choice)
+      document.querySelectorAll('.pg-seg[data-attr="theme"] button').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.val === choice)
+      })
+      updateSystemIndicator()
+      updateCode()
+    }
+
+    function applyAttr(attr, val) {
+      if (attr === 'theme') {
+        applyThemeChoice(val)
+        return
+      }
+      html.dataset[attr] = val
+      document.querySelectorAll(`.pg-seg[data-attr="${attr}"] button`).forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.val === val)
+      })
+      updateCode()
+    }
+
+    function updateCode() {
+      const brand  = html.dataset.brand  || 'default'
+      const radius = html.dataset.radius || 'default'
+      const size   = html.dataset.size   || 'comfortable'
+
+      const snippet = document.getElementById('code-snippet')
+
+      if (currentThemeChoice === 'system') {
+        snippet.innerHTML =
+          `<span class="attr-name">applyTheme</span>({ ` +
+          `<span class="attr-name">brand</span>: "<span class="attr-value">${brand}</span>", ` +
+          `<span class="attr-name">mode</span>: "<span class="attr-value">system</span>", ` +
+          `<span class="attr-name">radius</span>: "<span class="attr-value">${radius}</span>", ` +
+          `<span class="attr-name">size</span>: "<span class="attr-value">${size}</span>" })`
+      } else {
+        snippet.innerHTML =
+          `&lt;<span class="attr-name">html</span> ` +
+          `<span class="attr-name">data-brand</span>="<span class="attr-value">${brand}</span>" ` +
+          `<span class="attr-name">data-theme</span>="<span class="attr-value">${currentThemeChoice}</span>" ` +
+          `<span class="attr-name">data-radius</span>="<span class="attr-value">${radius}</span>" ` +
+          `<span class="attr-name">data-size</span>="<span class="attr-value">${size}</span>"&gt;`
+      }
+
+      document.querySelectorAll('.pg-preset-btn').forEach(btn => {
+        const p = presets[btn.dataset.preset]
+        const match =
+          p.brand  === (html.dataset.brand  || 'default') &&
+          p.theme  === currentThemeChoice &&
+          p.radius === (html.dataset.radius || 'default') &&
+          p.size   === (html.dataset.size   || 'comfortable')
+        btn.classList.toggle('active', match)
+      })
+    }
+
+    // OS 테마 변경 감지
+    sysMQ.addEventListener('change', () => {
+      if (currentThemeChoice === 'system') {
+        html.dataset.theme = resolveTheme('system')
+        updateSystemIndicator()
+      }
+    })
+
+    // 세그먼트 컨트롤 클릭
+    document.querySelectorAll('.pg-seg button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const attr = btn.closest('.pg-seg').dataset.attr
+        applyAttr(attr, btn.dataset.val)
+      })
+    })
+
+    // 프리셋 클릭
+    document.querySelectorAll('.pg-preset-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const p = presets[btn.dataset.preset]
+        Object.entries(p).forEach(([attr, val]) => applyAttr(attr, val))
+      })
+    })
+
+    // 복사 버튼
+    document.getElementById('copy-btn').addEventListener('click', function() {
+      const brand  = html.dataset.brand  || 'default'
+      const radius = html.dataset.radius || 'default'
+      const size   = html.dataset.size   || 'comfortable'
+      let text
+      if (currentThemeChoice === 'system') {
+        text = `applyTheme({ brand: "${brand}", mode: "system", radius: "${radius}", size: "${size}" })`
+      } else {
+        text = `<html data-brand="${brand}" data-theme="${currentThemeChoice}" data-radius="${radius}" data-size="${size}">`
+      }
+      navigator.clipboard.writeText(text)
+      this.textContent = '복사됨 ✓'
+      this.classList.add('copied')
+      setTimeout(() => { this.textContent = '복사'; this.classList.remove('copied') }, 1500)
+    })
+
+    // 초기화 — system 모드로 시작
+    applyThemeChoice('system')
+  </script>
+</body>
+</html>

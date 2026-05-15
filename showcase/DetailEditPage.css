@@ -1,0 +1,140 @@
+/* Composition component | figma-node: 8016:29853 | 2026-05-15 */
+
+/* ── Full page layout ───────────────────────────── */
+/* GNB 전체 너비 최상단, 하단에 LNB + content 가로 배치 */
+
+.dep-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: var(--sys-surface-static);
+}
+
+.dep-body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+/* ── LNB sidebar ────────────────────────────────── */
+
+.dep-lnb {
+  width: 250px;
+  flex-shrink: 0;
+  background: var(--sys-background-subtle);
+  padding: var(--spacing-24) var(--spacing-12);
+  overflow-y: auto;
+}
+
+/* ── Nav logo ───────────────────────────────────── */
+
+.dep-nav-logo {
+  font-family: var(--semantic-label-14-semibold-fontFamily);
+  font-size: var(--semantic-label-14-semibold-fontSize);
+  font-weight: var(--semantic-label-14-semibold-fontWeight);
+  color: var(--sys-content-neutral-strong);
+}
+
+/* ── Content area ───────────────────────────────── */
+/* Figma: contents frame — x=297, gap=40, background #FFF */
+
+.dep-content {
+  flex: 1;
+  padding: var(--spacing-48);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-40);
+  background: var(--sys-background-base);
+}
+
+/* ── Title section ──────────────────────────────── */
+
+.dep-title-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dep-page-title {
+  margin: 0;
+  font-family: var(--semantic-heading-20-bold-fontFamily);
+  font-size: var(--semantic-heading-20-bold-fontSize);
+  line-height: var(--semantic-heading-20-bold-lineHeight);
+  font-weight: var(--semantic-heading-20-bold-fontWeight);
+  letter-spacing: var(--semantic-heading-20-bold-letterSpacing);
+  color: var(--sys-content-neutral-strong);
+}
+
+/* ── KV table ───────────────────────────────────── */
+/* Figma: table frame — border-top, rows with border-bottom */
+
+.dep-kv-table {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--sys-border-neutral-weak);
+}
+
+.dep-kv-row {
+  display: flex;
+  align-items: stretch;
+  border-bottom: 1px solid var(--sys-border-neutral-weak);
+}
+
+/* ── KV data cell ───────────────────────────────── */
+/* Figma: State=default Size=xl — padding 12px 20px */
+
+.dep-kv-cell {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  padding: var(--spacing-12) var(--spacing-20);
+  gap: var(--spacing-8);
+}
+
+/* Figma: State=button Size=lg — padding 8px 20px (input rows) */
+.dep-kv-cell--input {
+  padding: var(--spacing-8) var(--spacing-20);
+}
+
+/* ── KV cell text ───────────────────────────────── */
+
+.dep-kv-text {
+  font-family: var(--semantic-body-14-regular-fontFamily);
+  font-size: var(--semantic-body-14-regular-fontSize);
+  line-height: var(--semantic-body-14-regular-lineHeight);
+  font-weight: var(--semantic-body-14-regular-fontWeight);
+  letter-spacing: var(--semantic-body-14-regular-letterSpacing);
+  color: var(--sys-content-neutral-default);
+}
+
+/* ── Expand — TextField/Select fill wrapper ─────── */
+
+.dep-expand {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ── Sticky bottom bar ──────────────────────────── */
+/* Figma: bottom_sticky_btn — x=250, padding 12px 48px, border-top rgba(0,27,55,0.1) */
+/* negative margin-inline breaks out of dep-content padding to span full content width */
+
+.dep-sticky-bar {
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  background: var(--sys-surface-static);
+  border-top: 1px solid var(--sys-border-neutral-subtle);
+  padding: var(--spacing-12) var(--spacing-48);
+  margin-inline: calc(-1 * var(--spacing-48));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dep-sticky-bar-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-8);
+}
